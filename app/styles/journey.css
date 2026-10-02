@@ -1,0 +1,298 @@
+/* Moving between pages: the "up next" band, the pull-back tab and the loading screen. */
+
+.next {
+  --charge: 0; /* 0 to 1 as the band scrolls in; at 1 the next page loads */
+  display: grid;
+  place-items: center;
+  height: 86svh;
+  border-top: 1px solid var(--rule);
+  background: var(--board);
+  text-align: center;
+}
+
+.next-inner {
+  width: min(560px, 100% - var(--gutter) * 2);
+}
+
+.next-count {
+  color: var(--muted);
+}
+
+.next-count span {
+  margin: 0 4px;
+  color: var(--copper);
+}
+
+.next-name {
+  display: inline-block;
+  margin: 10px 0 30px;
+  font-family: var(--font-serif);
+  font-size: clamp(56px, 10vw, 120px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  /* fills with copper from the left as the trace charges */
+  background: linear-gradient(
+    to right,
+    var(--copper) calc(var(--charge) * 100%),
+    var(--ink) calc(var(--charge) * 100%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* a trace that charges towards a pin */
+.next-meter {
+  position: relative;
+  height: 2px;
+  margin-right: 22px;
+  background: var(--board-rule);
+}
+
+.next-fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(var(--charge));
+  transform-origin: left;
+  background: linear-gradient(to right, rgba(231, 154, 92, 0.3), var(--gold) 80%, #fff);
+}
+
+.next-pin {
+  position: absolute;
+  right: -22px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border: 4px solid var(--board-rule);
+  border-radius: 50%;
+  background: var(--board);
+  transition:
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+
+.next[data-full] .next-pin {
+  border-color: var(--gold);
+  box-shadow: 0 0 16px 2px rgba(255, 196, 138, 0.6);
+}
+
+.next-hint {
+  margin-top: 22px;
+  color: var(--muted);
+  animation: nudge 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .next-hint {
+    animation: none;
+  }
+}
+
+@keyframes nudge {
+  50% {
+    transform: translateY(5px);
+    opacity: 0.5;
+  }
+}
+
+/* a tab that drops from under the nav as you scroll up past the top of a page */
+.back-tab {
+  --charge: 0; /* 0 to 1; at 1 the previous page loads */
+  position: fixed;
+  left: 50%;
+  top: 69px;
+  z-index: 19;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 200px;
+  padding: 12px 26px 14px;
+  border: 1px solid rgba(231, 154, 92, 0.45);
+  border-top: 0;
+  border-radius: 0 0 14px 14px;
+  background: var(--board);
+  transform: translate(-50%, calc(-100% + var(--charge) * 100%));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.25s;
+}
+
+.back-tab[data-pulling] {
+  opacity: 1;
+}
+
+.back-tab-label {
+  font-size: 10.5px;
+  color: var(--copper);
+}
+
+.back-tab strong {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+.back-tab-meter {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  margin-top: 8px;
+  background: var(--board-rule);
+}
+
+.back-tab-meter span {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(var(--charge));
+  transform-origin: left;
+  background: linear-gradient(to right, rgba(231, 154, 92, 0.3), var(--gold) 80%, #fff);
+}
+
+.transit {
+  /* always dark, whichever way the screen is flipped */
+  --paper: #0b0c0d;
+  --ink: #ece7df;
+  --muted: #7f7a71;
+  --copper: #d9864a;
+  --gold: #e79a5c;
+  color: var(--ink);
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* closing over the page that is being left */
+.transit[data-phase="in"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.3s;
+}
+
+/* clearing, with the next page already underneath */
+.transit[data-phase="out"] {
+  visibility: visible;
+  transition:
+    opacity 0.5s 0.12s,
+    visibility 0s 0.65s;
+}
+
+/* four buses from each side, running in to the chip's pins */
+.transit-bus {
+  position: absolute;
+  top: calc(50% - 42px + var(--row) * 28px); /* one row per pin */
+  left: 0;
+  right: 50%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(231, 154, 92, 0.5) 60%, var(--gold) 92%, #fff);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.transit-bus:nth-child(even) {
+  left: 50%;
+  right: 0;
+  background: linear-gradient(to left, transparent, rgba(231, 154, 92, 0.5) 60%, var(--gold) 92%, #fff);
+  transform-origin: right;
+}
+
+.transit[data-phase="in"] .transit-bus {
+  animation: bus-in 0.42s cubic-bezier(0.5, 0, 0.2, 1) calc(0.08s + var(--i) * 0.035s) forwards;
+}
+
+.transit[data-phase="out"] .transit-bus {
+  transform: scaleX(1);
+}
+
+@keyframes bus-in {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.transit-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: min(300px, 70vw);
+  min-height: 150px;
+  padding: 22px 26px;
+  border: 1px solid #3a3e42;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #25282b, #131516 55%, #1b1e20);
+  transform: scale(0.9);
+  opacity: 0;
+}
+
+/* pins down both sides, where the buses land */
+.transit-chip::before,
+.transit-chip::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 47px);
+  width: 12px;
+  height: 94px;
+  background: repeating-linear-gradient(to bottom, #b9bcc0 0 10px, transparent 10px 28px);
+}
+
+.transit-chip::before {
+  left: -13px;
+}
+
+.transit-chip::after {
+  right: -13px;
+}
+
+.transit[data-phase="in"] .transit-chip {
+  animation: chip-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s forwards;
+}
+
+.transit[data-phase="out"] .transit-chip {
+  opacity: 1;
+  transform: scale(1.12);
+  border-color: var(--copper);
+  transition:
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 0.2s;
+}
+
+@keyframes chip-in {
+  to {
+    transform: none;
+    opacity: 1;
+    border-color: rgba(231, 154, 92, 0.6);
+  }
+}
+
+.transit-part {
+  color: var(--copper);
+}
+
+.transit-chip strong {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 1;
+}
+
+.transit-status {
+  color: var(--muted);
+}
+
+.transit-status::after {
+  content: "...";
+  animation: live 0.9s steps(2) infinite;
+}

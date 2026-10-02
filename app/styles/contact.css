@@ -1,0 +1,125 @@
+/* The Contact page. */
+
+.contact {
+  background: var(--board);
+  color: var(--silk);
+  padding: clamp(72px, 10vw, 140px) 0 clamp(72px, 9vw, 120px);
+}
+
+.contact em {
+  color: var(--gold);
+}
+
+.contact-eyebrow {
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.contact-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(42px, 6.4vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+  text-wrap: balance;
+}
+
+/* two columns: how to reach him, and him at a glance */
+.contact-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 88px);
+  margin-top: clamp(40px, 6vw, 72px);
+}
+
+.contact-heading {
+  margin-bottom: 14px;
+  color: var(--gold);
+}
+
+.contact-links {
+  border-bottom: 1px solid var(--board-rule);
+}
+
+.contact-links a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 2px 16px;
+  padding: 18px 4px 18px 0;
+  border-top: 1px solid var(--board-rule);
+  font-size: clamp(17px, 1.6vw, 20px);
+  overflow-wrap: anywhere;
+  transition:
+    border-color 0.2s,
+    color 0.2s,
+    padding 0.25s;
+}
+
+.contact-links a:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  padding-left: 10px;
+}
+
+.contact-links .mono {
+  grid-column: 1 / -1;
+  color: var(--silk-2);
+}
+
+.contact-arrow {
+  color: var(--gold);
+}
+
+.contact-facts {
+  margin-bottom: 36px;
+  border-bottom: 1px solid var(--board-rule);
+}
+
+.contact-facts > div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 16px;
+  align-items: baseline;
+  padding: 13px 0;
+  border-top: 1px solid var(--board-rule);
+}
+
+.contact-facts dt {
+  color: var(--silk-2);
+}
+
+.contact-facts dd {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+
+.contact-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.contact-quick a {
+  display: block;
+  padding: 8px 16px;
+  border: 1px solid var(--board-rule);
+  border-radius: 999px;
+  font-size: 14.5px;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.contact-quick a:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+@media (max-width: 860px) {
+  .contact-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

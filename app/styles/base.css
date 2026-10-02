@@ -1,0 +1,275 @@
+/* Colours, fonts and the bare elements. Everything else builds on these names. */
+
+/* The palette is registered as real colours so that it can fade when the screen flips
+   between black and cream (see html[data-theme="paper"] below). */
+@property --paper {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0b0c0d;
+}
+
+@property --paper-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #131516;
+}
+
+@property --ink {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ece7df;
+}
+
+@property --ink-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #b4aea4;
+}
+
+@property --muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #7f7a71;
+}
+
+@property --rule {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #272a2c;
+}
+
+@property --copper {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #d9864a;
+}
+
+@property --glass {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 231, 223, 0.035);
+}
+
+@property --board {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #101213;
+}
+
+@property --board-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #15181a;
+}
+
+@property --board-rule {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #2a2e31;
+}
+
+@property --silk {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ece7df;
+}
+
+@property --silk-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a39d93;
+}
+
+@property --gold {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #e79a5c;
+}
+
+@property --glass-edge {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 231, 223, 0.14);
+}
+
+@property --glass-hi {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 231, 223, 0.09);
+}
+
+@property --glass-lo {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(236, 231, 223, 0.02);
+}
+
+:root {
+  --paper: #0b0c0d;
+  --paper-2: #131516;
+  --ink: #ece7df;
+  --ink-2: #b4aea4;
+  --muted: #7f7a71;
+  --rule: #272a2c;
+  --copper: #d9864a;
+  --glass: rgba(236, 231, 223, 0.035);
+  --glass-edge: rgba(236, 231, 223, 0.14);
+  --glass-hi: rgba(236, 231, 223, 0.09);
+  --glass-lo: rgba(236, 231, 223, 0.02);
+
+  --board: #101213;
+  --board-2: #15181a;
+  --board-rule: #2a2e31;
+  --silk: #ece7df;
+  --silk-2: #a39d93;
+  --gold: #e79a5c;
+  --phosphor: #ffc48a;
+
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
+
+  --gutter: clamp(20px, 4vw, 48px);
+  color-scheme: dark;
+  transition:
+    --paper 0.35s,
+    --paper-2 0.35s,
+    --ink 0.35s,
+    --ink-2 0.35s,
+    --muted 0.35s,
+    --rule 0.35s,
+    --copper 0.35s,
+    --glass 0.35s,
+    --board 0.35s,
+    --board-2 0.35s,
+    --board-rule 0.35s,
+    --silk 0.35s,
+    --silk-2 0.35s,
+    --gold 0.35s,
+    --glass-edge 0.35s,
+    --glass-hi 0.35s,
+    --glass-lo 0.35s;
+}
+
+/* The cream palette. Effects.tsx puts it on <html> while a cream section holds the middle
+   of the screen, so everything in view flips together and flips back on leaving. */
+html[data-theme="paper"] {
+  --paper: #f1ece2;
+  --paper-2: #e6e0d3;
+  --ink: #15181a;
+  --ink-2: #454a4e;
+  --muted: #7a7d7f;
+  --rule: #d3ccbd;
+  --copper: #a75a26;
+  --glass: rgba(21, 24, 26, 0.04);
+  --glass-edge: rgba(21, 24, 26, 0.16);
+  --glass-hi: rgba(21, 24, 26, 0.05);
+  --glass-lo: rgba(21, 24, 26, 0.015);
+
+  --board: #e9e3d6;
+  --board-2: #e2dccd;
+  --board-rule: #cfc7b7;
+  --silk: #15181a;
+  --silk-2: #454a4e;
+  --gold: #a75a26;
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    transition: none;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  /* pulling down at the top of a page goes back a page here, not the browser's own reload */
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+em {
+  font-style: italic;
+  color: var(--copper);
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 3px;
+}
+
+/* some pieces (the fanned deck, the hero board) reach past the page's edge by design;
+   clip, unlike hidden, cuts them off there without stopping the rail from sticking */
+main {
+  overflow-x: clip;
+}
+
+/* for screen readers only */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 560px) {
+  body {
+    font-size: 16px;
+  }
+}

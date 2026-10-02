@@ -1,0 +1,430 @@
+/* The About page: intro, capabilities and the Process rail with its traces. */
+
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: start;
+}
+
+.about-text p {
+  max-width: 60ch;
+  color: var(--ink-2);
+}
+
+.about-text p + p {
+  margin-top: 18px;
+}
+
+.about-text p:first-child {
+  font-size: 20px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 32px;
+  margin-top: 40px;
+}
+
+.facts > div {
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.facts dt {
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.facts dd {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+
+.portrait-frame {
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.portrait img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 40%;
+}
+
+.portrait figcaption {
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.spec {
+  border-bottom: 1px solid var(--rule);
+}
+
+.spec-row {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 260px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: baseline;
+  padding: 26px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.spec-ref {
+  color: var(--copper);
+}
+
+.spec-label {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 27px;
+  line-height: 1.15;
+}
+
+.spec-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.spec-items li {
+  padding: 5px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  background: var(--glass);
+}
+
+/* faint PCB traces with pulses of current, drawn by Traces.tsx */
+.traces {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.traces-copper {
+  fill: none;
+  stroke: #2b1f16;
+  stroke-width: 1.5;
+}
+
+.traces-current {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rail {
+  position: relative;
+  z-index: 1;
+}
+
+.rail-pin {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(24px, 4.5svh, 52px);
+  padding: clamp(48px, 8svh, 96px) 0;
+}
+
+/* pinned under the nav while the cards slide past */
+.rail[data-pinned] .rail-pin {
+  position: sticky;
+  top: 69px;
+  height: calc(100svh - 69px);
+  overflow: hidden;
+}
+
+.rail-label {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 18px;
+  color: var(--silk-2);
+}
+
+.rail-label span {
+  color: var(--gold);
+}
+
+.rail-head .section-title {
+  max-width: none;
+  margin-bottom: 0;
+  font-size: clamp(34px, min(4.8vw, 8svh), 60px);
+}
+
+.rail-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  /* lines the first card up with the page's content column */
+  padding: 6px max(var(--gutter), calc((100vw - 1200px) / 2 + var(--gutter)));
+  will-change: transform;
+}
+
+.rail-card {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  width: clamp(250px, 25vw, 350px);
+  min-height: clamp(230px, 36svh, 320px);
+  padding: 26px 26px 28px;
+  border-radius: 18px;
+  scroll-snap-align: center;
+  opacity: 0.4;
+  transition:
+    opacity 0.5s,
+    border-color 0.5s,
+    box-shadow 0.5s;
+}
+
+/* reached by the current */
+.rail-card[data-on] {
+  opacity: 1;
+  border-color: rgba(231, 154, 92, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 0 44px -12px rgba(231, 154, 92, 0.5);
+}
+
+.rail-card[data-on] .via {
+  border-color: var(--gold);
+  box-shadow: 0 0 16px 2px rgba(255, 196, 138, 0.55);
+}
+
+/* the step number, outlined until its card is powered */
+.rail-index {
+  margin-top: auto;
+  font-family: var(--font-serif);
+  font-size: clamp(64px, 7vw, 96px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(231, 154, 92, 0.5);
+  transition: color 0.5s;
+}
+
+.rail-card[data-on] .rail-index {
+  color: var(--gold);
+}
+
+.rail-card h3 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.1;
+  margin: 10px 0 8px;
+}
+
+.rail-card p {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--silk-2);
+}
+
+/* how far along the row you are */
+.rail-meter {
+  position: relative;
+  height: 2px;
+  background: var(--board-rule);
+}
+
+.rail-meter span {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
+  background: linear-gradient(to right, rgba(231, 154, 92, 0.3), var(--gold) 70%, #fff);
+  box-shadow: 0 0 12px rgba(255, 196, 138, 0.7);
+}
+
+/* not pinned (phones, reduced motion): the cards stack, smaller, down a vertical trace
+   that fills as you scroll */
+.rail:not([data-pinned]) .rail-meter {
+  display: none;
+}
+
+.rail:not([data-pinned]) .rail-frame {
+  position: relative;
+}
+
+.rail:not([data-pinned]) .rail-frame::before,
+.rail:not([data-pinned]) .rail-frame::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--gutter) + 8px);
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--board-rule);
+}
+
+.rail:not([data-pinned]) .rail-frame::after {
+  transform: scaleY(var(--progress, 0));
+  transform-origin: top;
+  background: linear-gradient(to bottom, rgba(231, 154, 92, 0.3), var(--gold) 80%, #fff);
+  box-shadow: 0 0 12px rgba(255, 196, 138, 0.7);
+}
+
+.rail:not([data-pinned]) .rail-track {
+  flex-direction: column;
+  gap: 10px;
+  width: auto;
+  padding: 6px var(--gutter) 6px calc(var(--gutter) + 34px);
+}
+
+.rail:not([data-pinned]) .rail-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: 16px;
+  align-items: start;
+  width: auto;
+  min-height: 0;
+  padding: 14px 16px 16px;
+  border-radius: 14px;
+}
+
+/* the via moves out of the card and onto the trace */
+.rail:not([data-pinned]) .via {
+  position: absolute;
+  z-index: 1;
+  left: -34px;
+  top: 20px;
+  margin: 0;
+}
+
+.rail:not([data-pinned]) .rail-index {
+  grid-row: span 2;
+  margin: 0;
+  font-size: 38px;
+}
+
+.rail:not([data-pinned]) .rail-card h3 {
+  margin: 2px 0 2px;
+  font-size: 22px;
+}
+
+.rail:not([data-pinned]) .rail-card p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .traces-live {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .about {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* About on phones: photo first as a banner, the facts tucked under it as one block,
+       then the text broken into a lead and short labelled notes */
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .about-text {
+    display: contents;
+  }
+
+  .portrait {
+    order: 1;
+  }
+
+  .portrait img {
+    aspect-ratio: 4 / 3;
+    object-position: center 44%;
+  }
+
+  .portrait-frame {
+    border-radius: 14px 14px 0 0;
+    border-bottom: 0;
+  }
+
+  .portrait figcaption {
+    display: none;
+  }
+
+  .facts {
+    order: 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 0;
+    border: 1px solid var(--rule);
+    border-radius: 0 0 14px 14px;
+    background: var(--glass);
+  }
+
+  .facts > div {
+    padding: 12px 14px 13px;
+    border-top: 0;
+  }
+
+  .facts > div:nth-child(odd) {
+    border-right: 1px solid var(--rule);
+  }
+
+  .facts > div:nth-child(n + 3) {
+    border-top: 1px solid var(--rule);
+  }
+
+  .facts dt {
+    font-size: 10.5px;
+  }
+
+  .facts dd {
+    font-size: 14.5px;
+  }
+
+  .about-text p {
+    order: 3;
+    margin-top: 22px;
+  }
+
+  .about-text p:first-child {
+    margin-top: 28px;
+    font-size: 18px;
+    line-height: 1.5;
+  }
+
+  .about-text p[data-label] {
+    padding-left: 14px;
+    border-left: 1px solid var(--copper);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .about-text p[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--copper);
+  }
+
+  .spec-row {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .spec-items {
+    grid-column: 2;
+  }
+}

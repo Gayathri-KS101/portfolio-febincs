@@ -1,0 +1,593 @@
+/* The Work page: the arc of project cards and the open project's file. */
+
+.work-head {
+  text-align: center;
+}
+
+.work-label {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  color: var(--ink-2);
+}
+
+.work-label span {
+  color: var(--copper);
+}
+
+.work-head .section-title {
+  max-width: none;
+  margin-bottom: clamp(8px, 1.5vw, 20px);
+}
+
+/* the arc and the file under it share one centred column; cqi below is 1% of its width */
+.browser {
+  container-type: inline-size;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+/* The arc, seen in perspective. Each card is swung about an upright axis far behind
+   the row, so the cards stand along a curve: the middle ones nearest, the outer ones
+   further back and turned away. */
+.arc {
+  --card: 19cqi; /* a card's width */
+  --step: 20deg; /* from one card to the next */
+  --radius: calc(var(--card) * 3.1); /* of the curve they stand on */
+  position: relative;
+  height: calc(var(--card) * 1.3 + 96px);
+  perspective: 1500px;
+  perspective-origin: 50% 30%;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* the lit floor the cards stand on */
+.arc-floor {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: 6px;
+  height: 90px;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(217, 134, 74, 0.2), transparent 70%);
+  pointer-events: none;
+}
+
+.file {
+  --at: var(--spot); /* its place along the arc, in cards from the centre */
+  --swing: calc(var(--at) * var(--step));
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  z-index: calc(10 - max(var(--at), var(--at) * -1) * 2);
+  width: var(--card);
+  height: calc(var(--card) * 1.3);
+  margin-left: calc(var(--card) / -2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  scroll-margin-top: 150px;
+  transform: translateZ(calc(var(--radius) * -1)) rotateY(var(--swing)) translateZ(var(--radius));
+  transition:
+    opacity 0.4s,
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* the chosen card turns to face you and steps forward */
+.file[aria-selected="true"] {
+  z-index: 20;
+  transform: translateZ(calc(var(--radius) * -1)) rotateY(var(--swing)) translateZ(var(--radius))
+    rotateY(calc(var(--swing) * -1)) translateZ(70px);
+}
+
+/* the card itself: its photo behind glass, with a gloss across the top */
+.file-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.8cqi 1.8cqi 1.7cqi;
+  border-radius: 16px;
+  overflow: hidden;
+  -webkit-box-reflect: below 8px linear-gradient(transparent 62%, rgba(0, 0, 0, 0.22));
+  transition:
+    border-color 0.3s,
+    box-shadow 0.4s,
+    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.file-cover {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.42;
+  filter: grayscale(0.7) contrast(1.1);
+  transition:
+    opacity 0.4s,
+    filter 0.4s;
+}
+
+/* gloss, scan lines, and a fade to black under the text */
+.file-face > .hud::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.2), transparent 34%),
+    repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px),
+    linear-gradient(to bottom, transparent 28%, rgba(11, 12, 13, 0.9));
+}
+
+.file-code,
+.file-name,
+.file-kind {
+  position: relative;
+  z-index: 2;
+}
+
+.file-code {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: auto;
+  color: var(--ink-2);
+}
+
+.file-state {
+  color: var(--muted);
+}
+
+.file-name {
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 2.9cqi, 30px);
+  line-height: 1.06;
+}
+
+.file-kind {
+  margin-top: 6px;
+  font-size: clamp(11.5px, 1.4cqi, 14px);
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+.file[aria-selected="true"] .file-face {
+  border-color: rgba(231, 154, 92, 0.75);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 30px 50px -24px rgba(0, 0, 0, 0.9);
+}
+
+.file[aria-selected="true"] .file-cover {
+  opacity: 0.7;
+  filter: none;
+}
+
+.file[aria-selected="true"] .hud {
+  --c: var(--copper);
+  inset: 5px;
+}
+
+.file[aria-selected="true"] .file-code,
+.file[aria-selected="true"] .file-state {
+  color: var(--copper);
+}
+
+/* the open project's file, centred under the arc */
+.panel {
+  position: relative;
+  padding: clamp(20px, 3vw, 40px);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.panel > .hud {
+  --c: rgba(231, 154, 92, 0.6);
+  --l: 20px;
+}
+
+.panel-file {
+  position: relative;
+  animation: file-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes file-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* one pass of a scan line as the file opens */
+.panel-file::before {
+  content: "";
+  position: absolute;
+  left: calc(clamp(20px, 3vw, 40px) * -1);
+  right: calc(clamp(20px, 3vw, 40px) * -1);
+  top: 0;
+  z-index: 3;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(231, 154, 92, 0.12) 85%, rgba(255, 196, 138, 0.7));
+  pointer-events: none;
+  animation: scan 0.8s ease-out both;
+}
+
+@keyframes scan {
+  from {
+    top: -80px;
+    opacity: 1;
+  }
+  to {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* status line along the top of the file */
+.panel-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--copper);
+}
+
+.panel-live {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--copper);
+  animation: live 1.6s ease-in-out infinite;
+}
+
+.panel-bar-meta {
+  margin-left: auto;
+  color: var(--muted);
+}
+
+/* the project's name and summary beside its main photo */
+.panel-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(22px, 3.5vw, 48px);
+  align-items: center;
+  margin-top: clamp(20px, 3vw, 32px);
+}
+
+.panel-head h2 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(34px, 4.4vw, 58px);
+  line-height: 1.03;
+  letter-spacing: -0.01em;
+}
+
+.panel-kind {
+  margin: 8px 0 18px;
+  color: var(--muted);
+}
+
+.panel-lead {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper-2);
+  color: inherit;
+  font: inherit;
+  cursor: zoom-in;
+  transition: border-color 0.25s;
+}
+
+.panel-lead:hover {
+  border-color: var(--copper);
+}
+
+.panel-lead img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.panel-lead-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 26px 14px 10px;
+  background: linear-gradient(to bottom, transparent, rgba(11, 12, 13, 0.88));
+  font-size: 10.5px;
+  text-align: left;
+  color: var(--ink-2);
+}
+
+/* the "other works" file: no main photo, and its builds as cards */
+.panel-head-plain {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.panel-builds {
+  margin-top: clamp(22px, 3vw, 32px);
+}
+
+.panel-builds .card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-content: start;
+}
+
+.panel-builds .card:has(.shots) {
+  grid-template-columns: minmax(0, 1fr) 120px;
+}
+
+.panel-builds .shots {
+  margin-top: 0;
+}
+
+.panel-builds .shot-caption {
+  display: none;
+}
+
+/* in the file the signal chain has the full width, on one line where it fits */
+.panel .chain {
+  justify-content: center;
+  margin: clamp(22px, 3vw, 32px) 0 0;
+}
+
+.panel .chain-link {
+  width: clamp(14px, 2vw, 26px);
+}
+
+.panel-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+  margin: clamp(22px, 3vw, 32px) 0;
+}
+
+.panel-body .list {
+  margin-top: 0;
+}
+
+.panel-body .specs {
+  margin-bottom: 18px;
+}
+
+.panel .links {
+  margin-top: 0;
+}
+
+.panel-shots {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px;
+}
+
+.panel-shots .shot-frame {
+  aspect-ratio: 4 / 3;
+}
+
+/* on to the neighbouring projects */
+.panel-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: clamp(24px, 3vw, 36px);
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.panel-foot button {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.15;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.panel-foot button:last-child {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.panel-foot button:hover {
+  color: var(--copper);
+}
+
+.panel-foot .mono {
+  font-size: 11px;
+  color: var(--copper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .file,
+  .file-face {
+    transition: none;
+  }
+
+  .panel-file,
+  .panel-live {
+    animation: none;
+  }
+
+  .panel-file::before {
+    display: none;
+  }
+}
+
+.project-summary {
+  font-size: 19px;
+  line-height: 1.55;
+  max-width: 58ch;
+}
+
+.specs {
+  margin: 0 0 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.specs > div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 16px;
+  align-items: baseline;
+  padding: 11px 0;
+  border-top: 1px solid var(--rule);
+}
+
+.specs dt {
+  color: var(--muted);
+}
+
+.specs dd {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* the eight links of the communication kit */
+.links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 28px 0 24px;
+}
+
+.link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 14px 16px;
+  border: 1px solid var(--ink);
+  border-radius: 6px;
+  background: var(--paper);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.link-air {
+  border-style: dashed;
+  border-color: var(--copper);
+}
+
+.link-kind {
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.link-air .link-kind {
+  color: var(--copper);
+}
+
+.link strong {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.15;
+  color: var(--ink);
+  margin: 4px 0 6px;
+}
+
+.link-boards {
+  color: var(--ink);
+}
+
+@media (max-width: 1000px) {
+  .links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .panel-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* phones: the arc becomes a wheel. The chosen card is in the middle, its neighbours
+       stand turned away to either side, and the rest wait out of sight. */
+  .arc {
+    --card: 50cqi;
+    --step: 36deg;
+    --radius: calc(var(--card) * 1.7);
+    height: calc(var(--card) * 1.3 + 84px);
+    perspective: 900px;
+  }
+
+  .file {
+    --at: var(--turn);
+  }
+
+  .file:not([aria-selected="true"]) {
+    opacity: 0.6;
+  }
+
+  /* further round than a neighbour: out of sight, so its trip across goes unseen */
+  .file[style*="--turn: 2"],
+  .file[style*="--turn:2"],
+  .file[style*="--turn: -2"],
+  .file[style*="--turn:-2"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .file-face {
+    padding: 14px 14px 13px;
+  }
+
+  .file-name {
+    font-size: 23px;
+  }
+
+  .file-kind {
+    font-size: 12.5px;
+  }
+
+  .panel-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel-lead {
+    order: -1;
+  }
+
+  .panel .chain {
+    justify-content: flex-start;
+  }
+
+  .panel-bar-meta {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .specs > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
